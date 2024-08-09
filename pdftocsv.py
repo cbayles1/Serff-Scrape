@@ -22,59 +22,54 @@ import pdfplumber
 import pandas as pd
 
 # Define the PDF file path
-pdf_path = "A:/SERFF Filings/08-09-2024/AETN-133858040/2024 ACC IA MIPPA Rates.pdf"
+#pdf_path = "A:/SERFF Filings/08-09-2024/AETN-133858040/2024 ACC IA MIPPA Rates.pdf"
+pdf_path = "H:/clbay/CodeProjects/serffScrape/output/08-09-2024/AETN-133858040/2024 ACC IA MIPPA Rates.pdf"
 
 # Initialize a list to hold rows of data
 rows = []
 
+def parseTableBody(header, body): # header is not included in body
+    rows = []
+    for line in body:
+        
+        # If lines are split inconsistently, try joining parts
+        if len(line.split()) < len(header):
+            
+            # Handle cases where data might be split across lines
+            # Join with the previous line if it appears to be split
+            if rows and len(rows[-1]) < len(header):
+                rows[-1].append(line.strip())
+            else:
+                # Otherwise, just add a new row
+                columns = line.split()
+                rows.append(columns)
+        else:
+            columns = line.split()
+            rows.append(columns)
+            
+    return rows
+
 # Open the PDF file
 with pdfplumber.open(pdf_path) as pdf:
     for page in pdf.pages:
-        text = page.extract_text()
+        text = page.extract_text().replace(" ,", ",") # replace function will fix it seperating by comma on accident, but will break any other uses of commas
         if text:
             # Split text into lines
             lines = text.split('\n')
             
-            # Print lines to debug
-            print("Extracted lines:")
-            for line in lines:
-                print(line)
+            header = lines[6].split()
+            rows = parseTableBody(header, lines[7:])
             
-            # Handle multi-line rows and extract header
-            header = lines[0].split()  # Adjust based on actual delimiter
-            print("Header:", header)
-            
-            for line in lines[1:]:
-                # If lines are split inconsistently, try joining parts
-                if len(line.split()) < len(header):
-                    # Handle cases where data might be split across lines
-                    # Join with the previous line if it appears to be split
-                    if rows and len(rows[-1]) < len(header):
-                        rows[-1].append(line.strip())
-                    else:
-                        # Otherwise, just add a new row
-                        columns = line.split()  # Adjust based on actual delimiter
-                        rows.append(columns)
-                else:
-                    columns = line.split()  # Adjust based on actual delimiter
-                    rows.append(columns)
-
-# Debug: Print first few rows and header
-print("Rows preview:", rows[:10])
-
-# Ensure all rows have the same number of columns as the header
-num_columns = len(header)
-rows = [row for row in rows if len(row) == num_columns]
-
-# Debug: Print rows count and a few rows
-print(f"Number of rows: {len(rows)}")
-print("Rows preview after cleaning:", rows[:10])
+            # Ensure all rows have the same number of columns as the header, or less
+            num_columns = len(header)
+            rows = [row for row in rows if len(row) <= num_columns]
 
 # Create DataFrame from rows
 df = pd.DataFrame(rows, columns=header)
 
 # Define the Excel file path
-excel_path = "A:/SERFF Filings/08-09-2024/AETN-133858040/AERT.xlsx"
+#excel_path = "/08-09-2024/AETN-133858040/AERT.xlsx"
+excel_path = "H:/clbay/CodeProjects/serffScrape/output/08-09-2024/AETN-133858040/AERT.xlsx"
 
 # Save DataFrame to Excel
 df.to_excel(excel_path, index=False)
