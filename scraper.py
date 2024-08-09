@@ -70,7 +70,7 @@ def runScraper(trackingNumber, driverPath):
 
     # ----------------------------------------------------------------------------------
 
-    time.sleep(10)
+    time.sleep(TEMP_FILE_TIMEOUT)
     driver.quit()
     
     # ----------------------------------------------------------------------------------
@@ -86,6 +86,3 @@ def getElementsOnceLoaded(driver, identifierType, identifierContent, multiple=Tr
     
 def getElementOnceLoaded(driver, identifierType, identifierContent, timeout=5):
     return getElementsOnceLoaded(driver, identifierType, identifierContent, False, timeout)
-
-if __name__ == "__main__":
-    runScraper("AETN-133858040", "chromedriver.exe")

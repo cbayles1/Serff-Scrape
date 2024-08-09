@@ -1,4 +1,4 @@
-import os, shutil, time
+import os, shutil, time, datetime
 from config import *
 from scraper import *
 
@@ -23,9 +23,16 @@ while True:
     # download each batch, then move into corresponding folder
     runScraper(trackingNum, DRIVER_PATH)
     for file in os.listdir(DOWNLOADS_PATH):
-        src = os.path.join(DOWNLOADS_PATH, file)
-        dest = os.path.join(DESTINATION_PATH, outerDir, trackingNum, file)
-        shutil.move(src, dest)
+        src = os.path.join(DOWNLOADS_PATH, file).replace("\\", "/")
+        dest = os.path.join(DESTINATION_PATH, outerDir, trackingNum, file).replace("\\", "/")
+            
+        # If file was created a minute or less ago, it is moved from the DOWNLOADS_PATH to the DESTINATION_PATH
+        creation = datetime.datetime.fromtimestamp(os.stat(src).st_birthtime)
+        now = datetime.datetime.now()
+        print("Creation: " + str(creation))
+        print("Now - min: " + str(now - datetime.timedelta(minutes=1)))
+        if creation >= now - datetime.timedelta(minutes=1):
+            shutil.move(src, dest)
     
     # return to parent directory
     os.chdir('..')
