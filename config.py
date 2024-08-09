@@ -1,7 +1,13 @@
-DOWNLOADS_PATH = "H:/clbay/Documents/Downloads"
-DESTINATION_PATH = "H:/clbay/CodeProjects/serffScrape/output/"
-DRIVER_PATH = "H:/clbay/CodeProjects/serffScrape/chromedriver.exe"
-TEMP_FILE_TIMEOUT = 5
+from dotenv import load_dotenv
+import os
+
+load_dotenv() # Looks for a .env file in the current directory and opens it
+
+# grabs each from the .env file, which is not on the GitHub and is made by each developer
+DOWNLOADS_PATH = os.getenv('DOWNLOADS_PATH')
+DESTINATION_PATH = os.getenv('DESTINATION_PATH')
+DRIVER_PATH = os.getenv('DRIVER_PATH')
+TEMP_FILE_TIMEOUT = 10
 
 # if any of these phrases are found in the title of any attachment (class "ui-commandlink"), it will not be downloaded
 blacklistedAttachments = [
