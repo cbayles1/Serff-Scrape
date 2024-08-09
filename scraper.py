@@ -66,9 +66,11 @@ def runScraper(trackingNumber, driverPath):
 
     files = getElementsOnceLoaded(driver, By.CLASS_NAME, "ui-commandlink") # all attachments
     for attachment in files:
-        # if not attachment.get_attribute('id') in blacklistedAttachmentIds: # don't download files in blacklist
-        #     attachment.click() # download each file
-        attachment.click() # download each file
+        
+        # if any blacklisted phrases are found in the title of any attachment (class "ui-commandlink"), it will not be downloaded
+        if not any((phrase in attachment.text) for phrase in blacklistedAttachments):
+            attachment.click() # download each file
+        #attachment.click() # download each file
 
     # ----------------------------------------------------------------------------------
 

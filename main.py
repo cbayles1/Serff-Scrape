@@ -25,12 +25,13 @@ while True:
     for file in os.listdir(DOWNLOADS_PATH):
         src = os.path.join(DOWNLOADS_PATH, file).replace("\\", "/")
         dest = os.path.join(DESTINATION_PATH, outerDir, trackingNum, file).replace("\\", "/")
-            
+        
         # If file was created a minute or less ago, it is moved from the DOWNLOADS_PATH to the DESTINATION_PATH
         creation = datetime.datetime.fromtimestamp(os.stat(src).st_ctime)
         now = datetime.datetime.now()
         if creation >= now - datetime.timedelta(minutes=1):
-            shutil.move(src, dest)
+            shutil.move(src, dest) # move file
+                
     
     # save filing info as .csv
     csvPath = os.path.join(DESTINATION_PATH, outerDir, trackingNum, 'filing_info.csv')
