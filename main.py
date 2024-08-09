@@ -32,10 +32,22 @@ def downloadBatch(parentPath, trackingNum):
 
 if __name__ == "__main__": 
     
-    # get tracking numbers from command-line arguments
+    # get tracking numbers from command-line arguments or else from user input
     trackingNums = []
-    for arg in sys.argv[1:]: # put each argument in list, excluding the script name
-        trackingNums.append(arg)
+    
+    if (len(sys.argv) == 1): # if no arguments, get tracking numbers from user
+        while True:
+            trackingNum = input("Enter tracking number, or DONE: ")
+            if trackingNum == "DONE": 
+                break
+            else: 
+                trackingNums.append(trackingNum)
+    else:
+        # put each argument in list, excluding the script name
+        for arg in sys.argv[1:]: 
+            trackingNums.append(arg)
+    
+    # -----------------------------------------------------------    
     
     # make destination if it doesn't exist, then move into it
     if not os.path.exists(DESTINATION_PATH): os.makedirs(DESTINATION_PATH)
