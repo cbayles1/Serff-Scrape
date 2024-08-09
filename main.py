@@ -22,7 +22,7 @@ def downloadBatch(parentPath, trackingNum):
         if creation >= now - datetime.timedelta(minutes=1):
             shutil.move(src, dest) # move file
     
-    print(f"Downloading bfiling info for {trackingNum}...")
+    print(f"Downloading biling info for {trackingNum}...")
     # save filing info as .csv
     csvPath = os.path.join(batchPath, 'filing_info.csv')
     with open(csvPath, 'w', newline='') as f:
