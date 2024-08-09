@@ -163,4 +163,7 @@ cython_debug/
 
 # Custom
 chromedriver-win64
+chromedriver.exe
 *.pdf
+.vscode 
+output
