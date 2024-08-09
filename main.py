@@ -1,4 +1,4 @@
-import os, shutil, time, datetime
+import os, shutil, time, datetime, csv
 from config import *
 from scraper import *
 
