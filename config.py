@@ -1,6 +1,6 @@
-DOWNLOADS_PATH = "H:/clbay/Documents/Downloads"
-DESTINATION_PATH = "H:/clbay/CodeProjects/serffScrape/output"
-DRIVER_PATH = "H:/clbay/CodeProjects/serffScrape/chromedriver.exe"
+DOWNLOADS_PATH = "C:/Users/charl/Downloads"
+DESTINATION_PATH = "A:/SERFF Filings"
+DRIVER_PATH = "A:/serffScrape/serffScrape/chromedriver.exe"
 TEMP_FILE_TIMEOUT = 5
 
 # if any of these phrases are found in the title of any attachment (class "ui-commandlink"), it will not be downloaded
