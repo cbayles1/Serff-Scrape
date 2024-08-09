@@ -27,7 +27,7 @@ while True:
         dest = os.path.join(DESTINATION_PATH, outerDir, trackingNum, file).replace("\\", "/")
             
         # If file was created a minute or less ago, it is moved from the DOWNLOADS_PATH to the DESTINATION_PATH
-        creation = datetime.datetime.fromtimestamp(os.stat(src).st_birthtime)
+        creation = datetime.datetime.fromtimestamp(os.stat(src).st_ctime)
         now = datetime.datetime.now()
         print("Creation: " + str(creation))
         print("Now - min: " + str(now - datetime.timedelta(minutes=1)))
