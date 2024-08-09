@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,7 +11,10 @@ from config import *
 def runScraper(trackingNumber, driverPath):
     
     service = Service(executable_path=driverPath)
-    driver = webdriver.Chrome(service=service)
+    options = Options()
+    options.add_argument("--headless=new")
+    options.add_argument('user-agent={0}'.format('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'))
+    driver = webdriver.Chrome(service=service, options=options)
     
     # ----------------------------------------------------------------------------------
     
@@ -82,8 +86,9 @@ def runScraper(trackingNumber, driverPath):
     # ----------------------------------------------------------------------------------
     
 def getElementsOnceLoaded(driver, identifierType, identifierContent, multiple=True, timeout=5):
-    WebDriverWait(driver, timeout).until(
-        EC.presence_of_element_located((identifierType, identifierContent))
+    wait = WebDriverWait(driver, timeout)
+    wait.until(
+        EC.visibility_of_element_located((identifierType, identifierContent))
     )
     if multiple:
         return driver.find_elements(identifierType, identifierContent)
