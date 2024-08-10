@@ -1,6 +1,7 @@
 import os, shutil, time, datetime, csv, sys
 from config import *
 from scraper import *
+from pdfToExcel import *
 
 def downloadBatch(parentPath, trackingNum):
     
@@ -61,5 +62,13 @@ if __name__ == "__main__":
     os.chdir(outerDir)
     
     for trackingNum in trackingNums:
-        try: downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum)
+        try:
+            downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum)
+            batchPath = os.path.join(DESTINATION_PATH, outerDir, trackingNum)
+            for file in os.listdir(batchPath):
+                if file.endswith("Rates (1).pdf") or file.endswith("Rates Revised.pdf"): # this will be updated once we have formats for each pdf
+                    pdfPath = os.path.join(batchPath, file).replace("\\", "/")
+                    excelPath = os.path.join(batchPath, "AERT.xlsx").replace("\\", "/")
+                    convertPdfToExcel(pdfPath, excelPath, 6, 7, 35)
+
         except: print("Invalid tracking number. Try again.")
