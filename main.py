@@ -11,7 +11,8 @@ def downloadBatch(parentPath, trackingNum):
 
     print(f"Downloading batch {trackingNum}...")
     # download each batch, then move into corresponding folder
-    filingInfo = runScraper(trackingNum, DRIVER_PATH)
+    try: filingInfo = runScraper(trackingNum, DRIVER_PATH)
+    except: raise Exception("Invalid tracking number.")
     for file in os.listdir(DOWNLOADS_PATH):
         src = os.path.join(DOWNLOADS_PATH, file).replace("\\", "/")
         dest = os.path.join(batchPath, file).replace("\\", "/")
@@ -29,6 +30,7 @@ def downloadBatch(parentPath, trackingNum):
         writer = csv.writer(f)
         for label, value in filingInfo.items():
             writer.writerow([label[:-1], value]) # [:-1] removes the colon
+    print("\nFinished.")
 
 if __name__ == "__main__": 
     
@@ -59,4 +61,5 @@ if __name__ == "__main__":
     os.chdir(outerDir)
     
     for trackingNum in trackingNums:
-        downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum)
+        try: downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum)
+        except: print("Invalid tracking number. Try again.")

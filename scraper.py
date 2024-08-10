@@ -42,7 +42,8 @@ def runScraper(trackingNumber, driverPath):
     inputBox = getElementOnceLoaded(driver, By.ID, "simpleSearch:serffTrackingNumber")
 
     inputBox.clear()
-    inputBox.send_keys(trackingNumber)
+    try: inputBox.send_keys(trackingNumber)
+    except: raise Exception("Invalid tracking number.")
     inputBox.send_keys(Keys.ENTER)
 
     # ----------------------------------------------------------------------------------

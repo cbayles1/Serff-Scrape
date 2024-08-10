@@ -22,7 +22,7 @@ def parseTableBody(header, body): # header is not included in body
             
     return rows
 
-def convertPdfToExcel(pdfPath, excelPath, headerLine, bodyStart, bodyEnd):
+def convertPdfToExcel(pdfPath, excelPath, headerLine, bodyStart, numRowsInBody):
     rows = []
     
     # Read the PDF file
@@ -34,6 +34,14 @@ def convertPdfToExcel(pdfPath, excelPath, headerLine, bodyStart, bodyEnd):
                 lines = text.split('\n')
                 
                 header = lines[headerLine].split()
+                
+                bodyEnd = bodyStart + numRowsInBody
+                # out of bounds checking
+                if (bodyStart < 0): bodyStart = 0
+                if (bodyStart >= len(lines)): bodyStart = len(lines) - 1
+                if (bodyEnd < 0 ): bodyEnd = 0
+                if (bodyEnd >= len(lines)): bodyEnd = len(lines) - 1
+                
                 rows = parseTableBody(header, lines[bodyStart:bodyEnd])
                 
                 # Ensure all rows have the same number of columns as the header, or less
@@ -53,4 +61,4 @@ pdf_path = "H:/clbay/CodeProjects/serffScrape/output/08-09-2024/AETN-133858040/2
 #excel_path = "/08-09-2024/AETN-133858040/AERT.xlsx"
 excel_path = "H:/clbay/CodeProjects/serffScrape/output/08-09-2024/AETN-133858040/AERT.xlsx"
 
-convertPdfToExcel(pdf_path, excel_path, 6, 7, 42)
+convertPdfToExcel(pdf_path, excel_path, 6, 7, 34)
