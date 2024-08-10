@@ -7,6 +7,7 @@ load_dotenv() # Looks for a .env file in the current directory and opens it
 DOWNLOADS_PATH = os.getenv('DOWNLOADS_PATH')
 DESTINATION_PATH = os.getenv('DESTINATION_PATH')
 DRIVER_PATH = os.getenv('DRIVER_PATH')
+PDF_FORMATS_PATH = os.getenv('PDF_FORMATS_PATH')
 TEMP_FILE_TIMEOUT = 10
 
 # if any of these phrases are found in the title of any attachment (class "ui-commandlink"), it will not be downloaded

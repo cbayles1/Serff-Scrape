@@ -66,9 +66,9 @@ if __name__ == "__main__":
             downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum)
             batchPath = os.path.join(DESTINATION_PATH, outerDir, trackingNum)
             for file in os.listdir(batchPath):
-                if file.endswith("Rates (1).pdf") or file.endswith("Rates Revised.pdf"): # this will be updated once we have formats for each pdf
+                if file.endswith("Rates.pdf"): # this will be updated once we have formats for each pdf
                     pdfPath = os.path.join(batchPath, file).replace("\\", "/")
                     excelPath = os.path.join(batchPath, "AERT.xlsx").replace("\\", "/")
-                    convertPdfToExcel(pdfPath, excelPath, 6, 7, 35)
+                    convertPdfToExcelFile(pdfPath, excelPath, 'rates')
 
         except: print("Invalid tracking number. Try again.")
