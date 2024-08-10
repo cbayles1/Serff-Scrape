@@ -84,7 +84,7 @@ def runScraper(trackingNumber, driverPath):
     return filingInfo
     
     # ----------------------------------------------------------------------------------
-    
+
 def getElementsOnceLoaded(driver, identifierType, identifierContent, multiple=True, timeout=5):
     wait = WebDriverWait(driver, timeout)
     wait.until(
