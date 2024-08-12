@@ -14,7 +14,7 @@ blacklistedAttachments = [
     "Certificate of Compliance",
     "Actuarial Certification",
     "Actuarial Memo",
-    "Exhibit 1",
+    "Exhibit 1.pdf",
     "Actuarial Memo Revised",
-    "Exhibit 1 Revised"
+    "Exhibit 1 Revised.pdf"
 ]

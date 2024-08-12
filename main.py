@@ -1,8 +1,8 @@
 import os, shutil, time, datetime, csv, sys
 from config import *
 from scraper import *
-import pdfplumber
 import pandas as pd
+from pypdf import PdfReader
 
 def downloadBatch(parentPath, trackingNum):
     
@@ -37,16 +37,18 @@ def downloadBatch(parentPath, trackingNum):
     print("\nFinished.")
 
 def convertPdfToExcelFile(inputPdfPath, outputExcelPath):
-    with pdfplumber.open(inputPdfPath) as pdf:
+    with PdfReader(inputPdfPath) as pdf:
         with pd.ExcelWriter(outputExcelPath) as excelWriter:
             for i, page in enumerate(pdf.pages):
-                # replace() below will fix pdfplumber seperating by comma on accident, but will break any other uses of commas
-                text = page.extract_text().replace(" ,", "")
+                # replace() below should fix a few cases of pypdf seperating by comma on accident
+                text = page.extract_text().replace(" ,", ",")
                 if not text: continue # go to next page if page is empty
                 lines = text.split('\n') # Split text into lines
                 rows = []
                 for line in lines: rows.append(line.strip().split()) # convert lines of text into rows seperated by spaces
                 pd.DataFrame(rows).to_excel(excelWriter, index=False, header=False, sheet_name=f'Page {i + 1}')
+
+#--------------------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     
@@ -86,3 +88,5 @@ if __name__ == "__main__":
                     pdfPath = os.path.join(batchPath, file).replace("\\", "/")
                     excelPath = pdfPath.replace(".pdf", ".xlsx")
                     convertPdfToExcelFile(pdfPath, excelPath)
+                    #os.remove(pdfPath) # deletes PDF file once Excel conversion is complete
+    print("Process complete.")
