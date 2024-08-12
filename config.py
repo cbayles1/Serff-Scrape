@@ -8,6 +8,7 @@ DOWNLOADS_PATH = os.getenv('DOWNLOADS_PATH')
 DESTINATION_PATH = os.getenv('DESTINATION_PATH')
 DRIVER_PATH = os.getenv('DRIVER_PATH')
 TEMP_FILE_TIMEOUT = 10
+REMOVE_PDF_FILES_AFTER_CONVERSION = False
 
 # if any of these phrases are found in the title of any attachment (class "ui-commandlink"), it will not be downloaded
 blacklistedAttachments = [

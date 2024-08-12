@@ -88,5 +88,6 @@ if __name__ == "__main__":
                     pdfPath = os.path.join(batchPath, file).replace("\\", "/")
                     excelPath = pdfPath.replace(".pdf", ".xlsx")
                     convertPdfToExcelFile(pdfPath, excelPath)
-                    #os.remove(pdfPath) # deletes PDF file once Excel conversion is complete
+                    if REMOVE_PDF_FILES_AFTER_CONVERSION:
+                        os.remove(pdfPath) # deletes PDF file once Excel conversion is complete
     print("Process complete.")
