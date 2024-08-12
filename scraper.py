@@ -75,7 +75,6 @@ def runScraper(trackingNumber, driverPath):
         # if any blacklisted phrases are found in the title of any attachment (class "ui-commandlink"), it will not be downloaded
         if not any((phrase in attachment.text) for phrase in blacklistedAttachments):
             attachment.click() # download each file
-        #attachment.click() # download each file
 
     # ----------------------------------------------------------------------------------
 

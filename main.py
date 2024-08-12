@@ -1,7 +1,8 @@
 import os, shutil, time, datetime, csv, sys
 from config import *
 from scraper import *
-from pdfToExcel import *
+import pdfplumber
+import pandas as pd
 
 def downloadBatch(parentPath, trackingNum):
     
@@ -11,9 +12,11 @@ def downloadBatch(parentPath, trackingNum):
     os.chdir(batchPath)
 
     print(f"Downloading batch {trackingNum}...")
-    # download each batch, then move into corresponding folder
+    # download each batch
     try: filingInfo = runScraper(trackingNum, DRIVER_PATH)
-    except: raise Exception("Invalid tracking number.")
+    except: return -1 # Invalid filing number
+    
+    # move into corresponding folder
     for file in os.listdir(DOWNLOADS_PATH):
         src = os.path.join(DOWNLOADS_PATH, file).replace("\\", "/")
         dest = os.path.join(batchPath, file).replace("\\", "/")
@@ -33,7 +36,19 @@ def downloadBatch(parentPath, trackingNum):
             writer.writerow([label[:-1], value]) # [:-1] removes the colon
     print("\nFinished.")
 
-if __name__ == "__main__": 
+def convertPdfToExcelFile(inputPdfPath, outputExcelPath):
+    with pdfplumber.open(inputPdfPath) as pdf:
+        with pd.ExcelWriter(outputExcelPath) as excelWriter:
+            for i, page in enumerate(pdf.pages):
+                # replace() below will fix pdfplumber seperating by comma on accident, but will break any other uses of commas
+                text = page.extract_text().replace(" ,", "")
+                if not text: continue # go to next page if page is empty
+                lines = text.split('\n') # Split text into lines
+                rows = []
+                for line in lines: rows.append(line.strip().split()) # convert lines of text into rows seperated by spaces
+                pd.DataFrame(rows).to_excel(excelWriter, index=False, header=False, sheet_name=f'Page {i + 1}')
+
+if __name__ == "__main__":
     
     # get tracking numbers from command-line arguments or else from user input
     trackingNums = []
@@ -62,13 +77,12 @@ if __name__ == "__main__":
     os.chdir(outerDir)
     
     for trackingNum in trackingNums:
-        try:
-            downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum)
+        if downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum) == -1:
+            print(f"{trackingNum} is an invalid tracking number. Make sure to try that one again.")
+        else:
             batchPath = os.path.join(DESTINATION_PATH, outerDir, trackingNum)
             for file in os.listdir(batchPath):
-                if file.endswith("Rates.pdf"): # this will be updated once we have formats for each pdf
+                if file.endswith(".pdf"):
                     pdfPath = os.path.join(batchPath, file).replace("\\", "/")
-                    excelPath = os.path.join(batchPath, "AERT.xlsx").replace("\\", "/")
-                    convertPdfToExcelFile(pdfPath, excelPath, 'rates')
-
-        except: print("Invalid tracking number. Try again.")
+                    excelPath = pdfPath.replace(".pdf", ".xlsx")
+                    convertPdfToExcelFile(pdfPath, excelPath)
