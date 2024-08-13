@@ -63,7 +63,7 @@ def runScraper(trackingNumber, driverPath):
         pathToRow = f"//div[@id='bodyContentWrapper']/div[1]/div[1]/div[1]/div[1]/div[{i+1}]/" # very fragile to page structure
         rowLabel = getElementOnceLoaded(driver, By.XPATH, pathToRow + "label[1]").text
         rowValue = getElementOnceLoaded(driver, By.XPATH, pathToRow + "div[1]").text
-        filingInfo[rowLabel] = rowValue
+        filingInfo[rowLabel[:-1]] = rowValue # [:-1] removes the colon
     
     # ----------------------------------------------------------------------------------
 
