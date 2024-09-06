@@ -1,4 +1,4 @@
-import os, shutil, time, datetime, csv, sys
+import os, shutil, time, datetime, csv, sys, copy
 from config import *
 from scraper import *
 import pandas as pd
@@ -116,12 +116,25 @@ if __name__ == "__main__":
 
             # combine each page/excel file into one big excel file (1 per tracking number that is)
             os.chdir(os.path.join(DESTINATION_PATH, outerDir))
-            combinedExcelPath = os.path.join(DESTINATION_PATH, outerDir, f'{trackingNum}.xlsx')
-            excelWriter = pd.ExcelWriter(combinedExcelPath)
+            combinedExcelOutputPath = os.path.join(DESTINATION_PATH, outerDir, f'{trackingNum}.xlsx')
+            excelWriter = pd.ExcelWriter(combinedExcelOutputPath)
             for file in os.listdir(batchPath):
+                combinedExcelInputPath = os.path.join(batchPath, file)
                 if file.endswith(".xlsx"):
-                    df = pd.read_excel(os.path.join(batchPath, file), header=None)
-                    df.to_excel(excelWriter, sheet_name=file.replace(".xlsx", ""), header=False, index=False)
+
+                    # getting names of each sheet in xlsx file
+                    excelFile = pd.ExcelFile(combinedExcelInputPath)
+                    sheetNames = copy.deepcopy(excelFile.sheet_names)
+                    excelFile.close()
+                    
+                    for sheet in sheetNames:
+                        newSheetName = file.replace(".xlsx", "")
+                        if "Exhibit" in newSheetName: # if Exhibit is in sheet name, start it there for formatting reasons
+                            newSheetName = newSheetName[newSheetName.index("Exhibit"):]
+                        df = pd.read_excel(os.path.join(batchPath, file), sheet, header=None)
+                        if len(sheetNames) > 1: newSheetName += f" - {sheet}"
+                        newSheetName = newSheetName[:31]
+                        df.to_excel(excelWriter, sheet_name=newSheetName, header=False, index=False)
                     if not REMOVE_TRACKING_NUM_DIR: # no point in doing the following if the folder is deleted anyway
                         os.remove(os.path.join(batchPath, file)) # delete temporary Excel file, we don't need it no more
                     
