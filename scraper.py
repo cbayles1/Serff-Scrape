@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from config import *
 
-def runScraper(trackingNumber, driverPath):
+def runScraper(trackingNumber, driverPath, state):
     
     service = Service(executable_path=driverPath)
     options = Options()
@@ -20,7 +20,7 @@ def runScraper(trackingNumber, driverPath):
     
     # page to keep session active
 
-    driver.get("https://filingaccess.serff.com/sfa/home/IA")
+    driver.get(f"https://filingaccess.serff.com/sfa/home/{state}")
     driver.maximize_window()
 
     beginBtn = getElementOnceLoaded(driver, By.CLASS_NAME, "btn-success")

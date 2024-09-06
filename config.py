@@ -9,6 +9,7 @@ DESTINATION_PATH = os.getenv('DESTINATION_PATH')
 DRIVER_PATH = os.getenv('DRIVER_PATH')
 TEMP_FILE_TIMEOUT = 10
 REMOVE_TRACKING_NUM_DIR = True
+VALID_STATES = ["IA", "SD"]
 
 # if any of these phrases are found in the title of any attachment (class "ui-commandlink"), it will not be downloaded
 blacklistedAttachments = [

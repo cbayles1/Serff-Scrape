@@ -4,7 +4,7 @@ from scraper import *
 import pandas as pd
 from pypdf import PdfReader
 
-def downloadBatch(parentPath, trackingNum):
+def downloadBatch(parentPath, trackingNum, state):
     
     batchPath = os.path.join(parentPath, trackingNum)
     # make inner folder with name of tracking number (if not exists)
@@ -13,7 +13,7 @@ def downloadBatch(parentPath, trackingNum):
 
     print(f"Downloading batch {trackingNum}...")
     # download each batch
-    try: filingInfo = runScraper(trackingNum, DRIVER_PATH)
+    try: filingInfo = runScraper(trackingNum, DRIVER_PATH, state)
     except: return None # Invalid filing number
     
     # move into corresponding folder
@@ -63,21 +63,34 @@ def convertPdfToExcelFile(inputPdfPath, inputFilename):
 #--------------------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    
-    # get tracking numbers from command-line arguments or else from user input
+
+    # get state and tracking numbers from command-line arguments or else from user input (first cmd line arg is read as state)
     trackingNums = []
+    state = ""
     
-    if (len(sys.argv) == 1): # if no arguments, get tracking numbers from user
+    if (len(sys.argv) < 2): # if neither given as args, prompt user for both state and tracking numbers
+        while True:
+            state = input("Enter state abbreviation: ").upper()
+            if state in VALID_STATES: break
+            else: print("Invalid state. Try again.")
         while True:
             trackingNum = input("Enter tracking number, or DONE: ")
-            if trackingNum == "DONE": 
-                break
-            else: 
-                trackingNums.append(trackingNum)
-    else:
-        # put each argument in list, excluding the script name
-        for arg in sys.argv[1:]: 
-            trackingNums.append(arg)
+            if trackingNum == "DONE": break
+            else: trackingNums.append(trackingNum)
+                
+    else: # if state given as arg 
+        state = sys.argv[1].upper()
+        if not state in VALID_STATES: 
+            print("Invalid state abbreviation. Exiting...")
+            quit()
+        if (len(sys.argv) < 3): # if no tracking numbers given as args, prompt user for tracking numbers
+            while True:
+                trackingNum = input("Enter tracking number, or DONE: ")
+                if trackingNum == "DONE": break
+                else: trackingNums.append(trackingNum)
+        else:
+            # if tracking numbers given as args, put each tracking num in list, excluding the script name
+            for arg in sys.argv[2:]: trackingNums.append(arg)
     
     # -----------------------------------------------------------    
     
@@ -91,7 +104,7 @@ if __name__ == "__main__":
     os.chdir(outerDir)
     
     for trackingNum in trackingNums:
-        filingInfo = downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum)
+        filingInfo = downloadBatch(os.path.join(DESTINATION_PATH, outerDir), trackingNum, state)
         if not filingInfo:
             print(f"{trackingNum} is an invalid tracking number. Make sure to try that one again.")
         else:
